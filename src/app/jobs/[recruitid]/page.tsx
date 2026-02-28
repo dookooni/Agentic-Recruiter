@@ -7,19 +7,22 @@ export default async function JobDetailPage({
 }: {
   params: { recruitid: string };
 }) {
-  const idStr = params.recruitid;
+  const idStr =
+  (params as any).recruitid ??
+  (params as any).id ??
+  (params as any).recruitId ??
+  Object.values(params as any)[0];
 
-  // recruitid 숫자 검증
-  if (!/^\d+$/.test(idStr)) {
-    return (
-      <div style={{ padding: 24 }}>
-        <h1>Invalid recruitid</h1>
-        <pre>{`params.recruitid = ${String(idStr)}`}</pre>
-      </div>
-    );
-  }
+if (!idStr || !/^\d+$/.test(String(idStr))) {
+  return (
+    <div style={{ padding: 24 }}>
+      <h1>Invalid recruitid</h1>
+      <pre>{JSON.stringify(params, null, 2)}</pre>
+    </div>
+  );
+}
 
-  const recruitid = parseInt(idStr, 10);
+const recruitid = parseInt(String(idStr), 10);
 
   const { data, error } = await supabase
     .from("job_posting")
