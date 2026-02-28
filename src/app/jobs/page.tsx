@@ -27,7 +27,7 @@ export default async function JobsPage({
   const to = from + pageSize - 1;
 
   let query = supabase
-    .from("job_posting_public")
+    .from("job_posting")
     .select(
       "recruitid,recruittitle,compname,workarea,dday,matched_score,ai_summary,detailpage,created_at",
       { count: "exact" }
