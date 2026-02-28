@@ -10,7 +10,7 @@ export default async function JobDetailPage({
   const recruitid = Number(params.id);
 
   const { data, error } = await supabase
-    .from("job_posting_public")
+    .from("job_posting")
     .select("*")
     .eq("recruitid", recruitid)
     .single();
