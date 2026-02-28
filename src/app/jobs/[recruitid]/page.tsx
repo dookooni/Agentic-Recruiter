@@ -6,21 +6,16 @@ export const revalidate = 60;
 export default async function JobDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: { recruitid: string };
 }) {
-  // 1) id가 숫자인지 엄격히 검증
-  const idStr = params.id;
+  const idStr = params.recruitid;
+
+  // 숫자 검증 (NaN 방지)
   if (!/^\d+$/.test(idStr)) {
-    // 숫자가 아니면 404 처리
     notFound();
   }
 
   const recruitid = parseInt(idStr, 10);
-
-  // 2) recruitid가 정상 숫자인지 재확인
-  if (!Number.isFinite(recruitid)) {
-    notFound();
-  }
 
   const { data, error } = await supabase
     .from("job_posting")
@@ -30,29 +25,16 @@ export default async function JobDetailPage({
     .eq("recruitid", recruitid)
     .single();
 
-  if (error) {
-    // 데이터가 없으면 404로 처리하는 게 UX 좋음
-    if ((error as any).code === "PGRST116") notFound(); // "Results contain 0 rows"
-    return (
-      <div style={{ padding: 24 }}>
-        <h1>Job Detail</h1>
-        <pre
-          style={{
-            marginTop: 12,
-            padding: 12,
-            background: "#f6f6f6",
-            borderRadius: 8,
-          }}
-        >
-          {error.message}
-        </pre>
-      </div>
-    );
+  if (error || !data) {
+    notFound();
   }
 
   return (
     <div style={{ padding: 24, maxWidth: 980, margin: "0 auto" }}>
-      <div style={{ fontSize: 12, opacity: 0.7 }}>{data.compname ?? ""}</div>
+      <div style={{ fontSize: 12, opacity: 0.7 }}>
+        {data.compname ?? ""}
+      </div>
+
       <h1 style={{ fontSize: 28, fontWeight: 750, marginTop: 6 }}>
         {data.recruittitle ?? ""}
       </h1>
@@ -79,7 +61,16 @@ export default async function JobDetailPage({
         </div>
       </div>
 
-      {data.detailpage ? (
+      <div style={{ marginTop: 16, display: "flex", gap: 10, flexWrap: "wrap" }}>
+        {data.recruitcategory && <Tag>{data.recruitcategory}</Tag>}
+        {data.popularcategory && <Tag>{data.popularcategory}</Tag>}
+        {data.groupname && <Tag>{data.groupname}</Tag>}
+        {data.careergubuncode && <Tag>{data.careergubuncode}</Tag>}
+        {data.gubuncode && <Tag>{data.gubuncode}</Tag>}
+        {data.depth && <Tag>{data.depth}</Tag>}
+      </div>
+
+      {data.detailpage && (
         <a
           href={data.detailpage}
           target="_blank"
@@ -88,7 +79,22 @@ export default async function JobDetailPage({
         >
           원문 공고 페이지 열기 ↗
         </a>
-      ) : null}
+      )}
     </div>
+  );
+}
+
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        fontSize: 12,
+        padding: "6px 10px",
+        border: "1px solid #eee",
+        borderRadius: 999,
+      }}
+    >
+      {children}
+    </span>
   );
 }
