@@ -1,18 +1,18 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-export const revalidate = 60; // 60초 캐시 (데모에 좋음)
+export const revalidate = 60; // 60초 캐시
 
 type Job = {
   recruitid: number;
-  recruittitle: string;
-  compname: string;
+  recruittitle: string | null;
+  compname: string | null;
   workarea: string | null;
   dday: number | null;
   matched_score: number | null;
   ai_summary: string | null;
   detailpage: string | null;
-  created_at: string;
+  created_at: string | null;
 };
 
 export default async function JobsPage({
@@ -40,11 +40,17 @@ export default async function JobsPage({
   }
 
   const { data, count, error } = await query;
+
   if (error) {
     return (
       <div style={{ padding: 24 }}>
         <h1>Jobs</h1>
-        <pre>{error.message}</pre>
+        <p style={{ opacity: 0.7 }}>
+          Supabase에서 job_posting을 읽다가 에러가 났어.
+        </p>
+        <pre style={{ marginTop: 12, padding: 12, background: "#f6f6f6", borderRadius: 8 }}>
+          {error.message}
+        </pre>
       </div>
     );
   }
@@ -79,15 +85,15 @@ export default async function JobsPage({
           >
             <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
               <div>
-                <div style={{ fontSize: 12, opacity: 0.7 }}>{j.compname}</div>
+                <div style={{ fontSize: 12, opacity: 0.7 }}>{j.compname ?? "(no company)"}</div>
                 <Link href={`/jobs/${j.recruitid}`} style={{ fontSize: 18, fontWeight: 650 }}>
-                  {j.recruittitle}
+                  {j.recruittitle ?? "(no title)"}
                 </Link>
                 <div style={{ marginTop: 6, fontSize: 14, opacity: 0.85 }}>
                   {j.ai_summary ?? "요약 없음"}
                 </div>
                 <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>
-                  {j.workarea ?? "지역 미상"} · D-{j.dday ?? "?"} · Score {j.matched_score ?? "?"}
+                  {(j.workarea ?? "지역 미상") + " · " + `D-${j.dday ?? "?"}` + " · " + `Score ${j.matched_score ?? "?"}`}
                 </div>
               </div>
 
