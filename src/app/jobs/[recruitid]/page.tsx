@@ -1,28 +1,26 @@
 import { supabase } from "@/lib/supabase";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function JobDetailPage({
   params,
 }: {
-  params: { recruitid: string };
+  params: { recruitid?: string };
 }) {
-  const idStr =
-  (params as any).recruitid ??
-  (params as any).id ??
-  (params as any).recruitId ??
-  Object.values(params as any)[0];
+  // params 디버그용 출력 (문제 해결되면 지워도 됨)
+  const idStr = params?.recruitid;
 
-if (!idStr || !/^\d+$/.test(String(idStr))) {
-  return (
-    <div style={{ padding: 24 }}>
-      <h1>Invalid recruitid</h1>
-      <pre>{JSON.stringify(params, null, 2)}</pre>
-    </div>
-  );
-}
+  if (!idStr || !/^\d+$/.test(idStr)) {
+    return (
+      <div style={{ padding: 24 }}>
+        <h1>Invalid recruitid</h1>
+        <pre>{JSON.stringify({ params }, null, 2)}</pre>
+      </div>
+    );
+  }
 
-const recruitid = parseInt(String(idStr), 10);
+  const recruitid = parseInt(idStr, 10);
 
   const { data, error } = await supabase
     .from("job_posting")
@@ -43,15 +41,6 @@ const recruitid = parseInt(String(idStr), 10);
     );
   }
 
-  if (!data) {
-    return (
-      <div style={{ padding: 24 }}>
-        <h1>No data</h1>
-        <pre>{`recruitid = ${recruitid}`}</pre>
-      </div>
-    );
-  }
-
   return (
     <div style={{ padding: 24, maxWidth: 980, margin: "0 auto" }}>
       <div style={{ fontSize: 12, opacity: 0.7 }}>{data.compname ?? ""}</div>
@@ -62,7 +51,12 @@ const recruitid = parseInt(String(idStr), 10);
         {data.ai_summary ?? "요약 없음"}
       </div>
       {data.detailpage ? (
-        <a href={data.detailpage} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 18 }}>
+        <a
+          href={data.detailpage}
+          target="_blank"
+          rel="noreferrer"
+          style={{ display: "inline-block", marginTop: 18 }}
+        >
           원문 공고 페이지 ↗
         </a>
       ) : null}
