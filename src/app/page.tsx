@@ -55,6 +55,12 @@ export default function Home() {
             >
               Jobs \uBCF4\uB7EC\uAC00\uAE30
             </Link>
+            <Link
+              href="/portfolio/upload"
+              className="inline-flex items-center justify-center rounded-xl border border-sky-200 bg-sky-50 px-5 py-3 text-sm font-semibold text-sky-700 transition hover:bg-sky-100"
+            >
+              Portfolio \uC5C5\uB370\uC774\uD2B8
+            </Link>
             <a
               href="https://nextjs.org/docs"
               target="_blank"
