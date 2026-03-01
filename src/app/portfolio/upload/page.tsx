@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { Buffer } from "buffer";
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_TYPES = [".pdf", ".doc", ".docx", ".txt"];
@@ -51,15 +52,41 @@ export default function PortfolioUploadPage() {
     setStatus("ready");
   };
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     if (!selectedFile) {
       setError("업로드할 포트폴리오 파일을 선택해 주세요.");
       return;
     }
 
-    setError(null);
-    setStatus("submitted");
+    try {
+      setError(null);
+
+      // 파일을 base64로 변환
+      const arrayBuffer = await selectedFile.arrayBuffer();
+      const base64 = Buffer.from(arrayBuffer).toString("base64");
+
+      const response = await fetch("/api/portfolio/upload", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          filename: selectedFile.name,
+          mimeType: selectedFile.type,
+          fileBase64: base64,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("업로드 실패");
+      }
+
+      setStatus("submitted");
+    } catch (err: any) {
+      setError(err.message ?? "업로드 중 오류 발생");
+    }
   };
 
   return (
