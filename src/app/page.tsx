@@ -1,16 +1,33 @@
 import Link from "next/link";
 
 const metrics = [
-  { label: "오늘 신규 공고", value: "48" },
-  { label: "AI 매칭 평균", value: "82" },
-  { label: "이번 주 지원 가능", value: "137" },
+  { label: "New postings today", value: "48" },
+  { label: "Avg AI match score", value: "82" },
+  { label: "Open this week", value: "137" },
 ];
 
 const highlights = [
-  "실시간으로 최신 채용 공고를 확인",
-  "AI 요약으로 핵심만 빠르게 파악",
-  "직무 적합도 점수 기반 우선순위 추천",
+  "Track fresh postings in near real-time",
+  "Use AI summaries to scan faster",
+  "Prioritize applications by match score",
 ];
+
+const architecture = [
+  "[n8n Scheduler]",
+  "      -> [Browserless Scraper]",
+  "      -> [AI Summary Worker]",
+  "      -> [Supabase DB]",
+  "      -> [Next.js /jobs UI on Vercel]",
+];
+
+const techPoints = [
+  "n8n + Browserless: scheduled crawl flow with stable headless automation.",
+  "Supabase: central storage for postings, summaries, and query-ready fields.",
+  "Next.js on Vercel: fast listing/detail UI with simple deploy and scale.",
+];
+
+const projectOneLiner =
+  "CATCH \uACF5\uACE0\uB97C \uC790\uB3D9 \uC218\uC9D1\u2192AI \uC694\uC57D\u2192DB \uC801\uC7AC\u2192\uAC80\uC0C9/\uC5F4\uB78C";
 
 export default function Home() {
   return (
@@ -24,14 +41,11 @@ export default function Home() {
           </p>
 
           <h1 className="max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl">
-            채용 탐색을 더 빠르고 정확하게,
-            <br className="hidden sm:block" />
-            현대적인 지원 경험으로 바꿉니다.
+            Faster hiring discovery with a modern workflow.
           </h1>
 
-          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-            공고 목록, AI 요약, 매칭 점수를 한 화면에서 확인하고 바로 상세 페이지로
-            이동하세요.
+          <p className="mt-5 max-w-3xl rounded-xl border border-white/10 bg-slate-900/70 px-4 py-3 text-sm leading-relaxed text-slate-200 sm:text-base">
+            {projectOneLiner}
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -39,7 +53,7 @@ export default function Home() {
               href="/jobs"
               className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
             >
-              채용 공고 보러가기
+              Jobs \uBCF4\uB7EC\uAC00\uAE30
             </Link>
             <a
               href="https://nextjs.org/docs"
@@ -47,7 +61,7 @@ export default function Home() {
               rel="noreferrer"
               className="inline-flex items-center justify-center rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
             >
-              개발 문서 열기
+              Docs
             </a>
           </div>
         </header>
@@ -64,8 +78,37 @@ export default function Home() {
           ))}
         </section>
 
+        <section className="grid gap-4 lg:grid-cols-2">
+          <article className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 sm:p-8">
+            <h2 className="text-lg font-semibold text-white sm:text-xl">
+              Architecture Mini Diagram
+            </h2>
+            <pre className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-slate-950/60 p-4 text-xs leading-6 text-cyan-100">
+              {architecture.join("\n")}
+            </pre>
+          </article>
+
+          <article className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 sm:p-8">
+            <h2 className="text-lg font-semibold text-white sm:text-xl">
+              Tech Stack / Operating Points
+            </h2>
+            <div className="mt-4 grid gap-3">
+              {techPoints.map((point) => (
+                <p
+                  key={point}
+                  className="rounded-xl border border-white/10 bg-slate-800/70 px-4 py-3 text-sm text-slate-200"
+                >
+                  {point}
+                </p>
+              ))}
+            </div>
+          </article>
+        </section>
+
         <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-white sm:text-xl">핵심 기능</h2>
+          <h2 className="text-lg font-semibold text-white sm:text-xl">
+            Core Benefits
+          </h2>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {highlights.map((text) => (
               <div
